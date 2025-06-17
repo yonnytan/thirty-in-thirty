@@ -2,6 +2,8 @@
 
 A beautiful, real-time analog clock built with pure JavaScript, HTML, and CSS. Features smooth hand movements, proper time calculations, and a stunning gradient background.
 
+<img src="clockImage.png" alt="Clock Demo" height="500">
+
 ## Features
 
 - **Real-time accuracy** - Displays the current time with precise calculations
