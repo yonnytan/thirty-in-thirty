@@ -32,7 +32,7 @@ Inspired by Wes Bos's renowned course, this repository contains a collection of 
 | #   | Project Name                               | Description                                      | Status |
 | --- | ------------------------------------------ | ------------------------------------------------ | ------ |
 | 1   | JavaScript Drum Kit                        | Play sounds on key presses, audio and DOM events | ✅     |
-| 2   | CSS + JS Clock                             | Real-time clock, Date object, CSS transforms     |        |
+| 2   | CSS + JS Clock                             | Real-time clock, Date object, CSS transforms     | ✅     |
 | 3   | Playing with CSS Variables and JS          | Manipulate CSS custom properties with JS         |        |
 | 4   | Array Cardio Day 1                         | Practice with `map()`, `filter()`, `reduce()`    |        |
 | 5   | Flex Panels Image Gallery                  | CSS Flexbox, interactive panels                  |        |
