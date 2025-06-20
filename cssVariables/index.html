@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoped CSS Variables with JS</title>
+</head>
+<body>
+    <h2>Updating CSS Variables with JS</h2>
+    <div class="controls">
+       <div class="control-group">
+           <label for="spacing">Spacing</label>
+           <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+       </div>
+       <div class="control-group">
+           <label for="blur">Blur</label>
+           <input id="blur" type="range" name="blur" min="0" max="25" value="0" data-sizing="px">
+       </div>
+       <div class="control-group">
+           <label for="base">Base Color</label>
+           <input id="base" type="color" name="base" value="#ffc600">
+       </div>
+       <div class="control-group">
+           <label for="width">Width</label>
+           <input id="width" type="range" name="width" min="100" max="800" value="500" data-sizing="px">
+       </div>
+       <div class="control-group">
+           <label for="height">Height</label>
+           <input id="height" type="range" name="height" min="100" max="600" value="400" data-sizing="px">
+       </div>
+    </div>
+    <input type="file" id="imageUpload" name="image" accept="image/*">
+    <div class="preview">
+        <img id="preview" src=" ">
+    </div>
+    <div class="download-section">
+        <button id="downloadBtn" type="button">Download Image</button>
+    </div>
+        
+    <style>
+        :root{
+            --base: #ffc600;
+            --spacing: 10px;
+            --blur: 0px;
+            --width: 500px;
+            --height: 400px;
+        }
+
+        img{
+            padding: var(--spacing);
+            background: var(--base);
+            filter: blur(var(--blur));
+            width: var(--width);
+            height: var(--height);
+            display: none; /* Hide until image is uploaded */
+        }
+
+        .preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50vh; /* Ensures vertical centering space */
+            margin-top: 20px;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 20px;
+            display: none; /* Hide until image is uploaded */
+        }
+
+        #downloadBtn {
+            background: white;
+            color: #193549;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #downloadBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .hl{
+            color: var(--base);
+        }
+
+        .controls{
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .controls label{
+            margin-right: 0;
+            font-size: 20px;
+            white-space: nowrap;
+        }   
+
+        .controls input{
+            margin-right: 0;
+        }
+        
+        body{
+            text-align: center;
+            background: #193549;
+            color: white;
+            font-family: 'helvetica neue', sans-serif;
+            font-weight: 100;
+            font-size: 30px;
+        }
+        
+    </style>
+
+    <script>
+        const imageInput = document.getElementById("imageUpload");
+        const preview = document.getElementById("preview");
+
+        // Image upload and preview functionality
+        imageInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block"; // Show the image when uploaded
+                    
+                    // Show download button
+                    document.querySelector('.download-section').style.display = "block";
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Download functionality
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Get current CSS variable values
+            const computedStyle = getComputedStyle(document.documentElement);
+            const spacing = parseInt(computedStyle.getPropertyValue('--spacing'));
+            const blur = parseInt(computedStyle.getPropertyValue('--blur'));
+            const baseColor = computedStyle.getPropertyValue('--base');
+            const width = parseInt(computedStyle.getPropertyValue('--width'));
+            const height = parseInt(computedStyle.getPropertyValue('--height'));
+            
+            // Set canvas size (including padding)
+            canvas.width = width + (spacing * 2);
+            canvas.height = height + (spacing * 2);
+            
+            // Fill background with base color
+            ctx.fillStyle = baseColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Apply blur filter
+            ctx.filter = `blur(${blur}px)`;
+            
+            // Draw the image
+            ctx.drawImage(preview, spacing, spacing, width, height);
+            
+            // Download the canvas as image
+            const link = document.createElement('a');
+            link.download = 'styled-image.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+
+        // CSS Variables functionality
+        const inputs = document.querySelectorAll('.controls input');
+
+        function handleUpdate(){ // this is the input element
+            const suffix = this.dataset.sizing || '';
+            document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
+        }
+
+        inputs.forEach(input => input.addEventListener('change', handleUpdate));
+        inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
+    </script>
+</body>
+</html>
